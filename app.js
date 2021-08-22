@@ -16,6 +16,7 @@ $("#search-form").submit(function (event) {
         let show = {};
         const response = await axios.get("https://api.tvmaze.com/search/shows", { params: { q: `${event.currentTarget[0].value}` } });
         for (let i = 0; i < response.data.length; i++) {
+            console.log(shows);
             show["id"] = response.data[i].show.id;
             show["name"] = response.data[i].show.name;
             show["summary"] = response.data[i].show.summary;
@@ -59,16 +60,17 @@ $("#search-form").submit(function (event) {
 /** Populate shows list:
  *     - given list of shows, add shows to DOM
  */
-function populateEpisodes (episodes){
-    const $episodesList= $("#episodes-list");
-    for(let episode of episodes){
+function populateEpisodes(episodes) {
+    const $episodesList = $("#episodes-list");
+    $episodesList.empty();
+    for (let episode of episodes) {
         let $item = $(
-            `<li class="col-md-6 col-lg-3>${episode.name}</li>
-            <li class="col-md-6 col-lg-3>${episode.number}</li>
-            <li class="col-md-6 col-lg-3>${episode.season}</li>
-            <li class="col-md-6 col-lg-3>${episode.id}</li>`
-        )
+            `<li class= "list-group-item"><b>${episode.name}</b>
+            , ep: ${episode.number}
+             season: ${episode.season}
+            , id: ${episode.id}</li>`);
         $episodesList.append($item);
+        $("#episodes-area").show();
     }
 }
 function populateShows(shows) {
@@ -129,18 +131,16 @@ $("#shows-list").click(async function (eve) {
     const epResponse = await axios.get(`http://api.tvmaze.com/shows/${$showId}/episodes`);
     for (let i = 0; i < epResponse.data.length; i++) {
         console.log(i);
-        console.log(epResponse.data[i])
-        console.log(epResponse.data[i].name);
-        console.log(epResponse.data[i].number);
-        console.log(episode);
-
-        episode[name] = epResponse.data[i].name;
-        episode[number] = epResponse.data[i].number;
-        episode[id] = epResponse.data[i].id;
-        episode[season] = epResponse.data[i].season;
+        episode["name"] = epResponse.data[i].name;
+        episode["number"] = epResponse.data[i].number;
+        episode["id"] = epResponse.data[i].id;
+        episode["season"] = epResponse.data[i].season;
+        episodes.push(episode);
+        episode = {};
 
     }
-populateEpisodes(episodes);
+    populateEpisodes(episodes);
+    /* populateEpisodes(episodes); */
     /* let $epList = `<li>` */
 })
 
